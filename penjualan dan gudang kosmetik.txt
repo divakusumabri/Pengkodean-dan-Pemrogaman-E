@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Penjualan Kosmetik</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Penjualan & Gudang Kosmetik</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="produk.html">Produk</a></li>
+            <li><a href="penjualan.html">Penjualan</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Selamat Datang di Aplikasi Penjualan Kosmetik</h2>
+        <p>Kelola stok dan transaksi penjualan kosmetik dengan mudah.</p>
+        <section>
+            <h3>Produk Tersedia</h3>
+            <div id="produk-list"></div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("produk.php")
+                .then(response => response.json())
+                .then(data => {
+                    let produkList = document.getElementById("produk-list");
+                    data.forEach(produk => {
+                        let div = document.createElement("div");
+                        div.className = "produk-item";
+                        div.innerHTML = `<h4>${produk.nama_produk}</h4><p>Harga: Rp ${produk.harga}</p>`;
+                        produkList.appendChild(div);
+                    });
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        });
+    </script>
+</body>
+</html>
+<?php
+header("Content-Type: application/json");
+
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "penjualan_dan_gudang_kosmetik";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die(json_encode(["error" => "Koneksi database gagal"]));
+}
+
+$sql = "SELECT id_produk, nama_produk, harga FROM produk";
+$result = $conn->query($sql);
+
+$produkList = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $produkList[] = $row;
+    }
+}
+
+echo json_encode($produkList);
+$conn->close();
+?>
+<?php
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "penjualan_dan_gudang_kosmetik";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die("Koneksi database gagal: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama_produk = $_POST["nama_produk"];
+    $harga = $_POST["harga"];
+    $stok = $_POST["stok"];
+    $id_kategori = $_POST["id_kategori"];
+    $id_supplier = $_POST["id_supplier"];
+
+    $sql = "INSERT INTO produk (nama_produk, harga, stok, id_kategori, id_supplier) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sdiii", $nama_produk, $harga, $stok, $id_kategori, $id_supplier);
+    
+    if ($stmt->execute()) {
+        echo "Produk berhasil ditambahkan!";
+    } else {
+        echo "Gagal menambahkan produk: " . $conn->error;
+    }
+
+    $stmt->close();
+}
+$conn->close();
+?>
+
