@@ -1,0 +1,11 @@
+aset_id,kategori,nilai_perolehan,umur_ekonomis,metode
+1,bangunan,339931,10,saldo_menurun
+2,mesin,307624,10,garis_lurus
+3,mesin,224243,10,garis_lurus
+4,kendaraan,148555,5,saldo_menurun
+5,kendaraan,206530,10,garis_lurus
+6,mesin,300551,10,saldo_menurun
+7,mesin,308261,10,saldo_menurun
+8,mesin,371836,5,saldo_menurun
+9,mesin,302283,10,saldo_menurun
+10,mesin,199299,10,garis_lurus
